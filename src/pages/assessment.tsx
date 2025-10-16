@@ -8,6 +8,7 @@ import {useNavigate, useSearchParams} from 'react-router-dom';
 import {Card} from '@/components/ui/card';
 import {Button} from '@/components/ui/button';
 import {Progress} from '@/components/ui/progress';
+import {hasValidUserInviteCode} from '@/lib/invite-code';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -31,9 +32,19 @@ type AssessmentStep = 'consent' | 'demographics' | 'questionnaire' | 'processing
 export default function Assessment() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  
+
   // 获取评估类型
   const assessmentType = (searchParams.get('type') as 'quick' | 'full') || 'quick';
+
+  // 邀请码验证检查
+  useEffect(() => {
+    // 检查用户是否有有效的邀请码
+    if (!hasValidUserInviteCode()) {
+      // 没有有效邀请码，重定向到邀请码输入页面
+      navigate('/invite');
+      return;
+    }
+  }, [navigate]);
   
   // 状态管理
   const [currentStep, setCurrentStep] = useState<AssessmentStep>('consent');
@@ -345,50 +356,56 @@ const handleProgressDialogOpenChange = (open: boolean) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-psychology-calm via-white to-psychology-warm">
+    <div className="min-h-screen sri-gradient-hero">
       <AlertDialog open={showProgressDialog} onOpenChange={handleProgressDialogOpenChange}>
-        <AlertDialogContent className="max-w-[calc(100%-2rem)] sm:max-w-sm rounded-xl p-6 space-y-6">
-          <AlertDialogHeader className="space-y-3 text-center">
-            <AlertDialogTitle className="text-xl font-semibold">
+        <AlertDialogContent className="max-w-[calc(100%-2rem)] sm:max-w-lg sri-card p-8 space-y-6">
+          <AlertDialogHeader className="space-y-4 text-center">
+            <div className="w-16 h-16 bg-psychology-primary/10 rounded-2xl flex items-center justify-center mx-auto">
+              <AlertTriangle className="w-8 h-8 text-psychology-primary" />
+            </div>
+            <AlertDialogTitle className="text-2xl font-bold text-foreground">
               检测到未完成的评估
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-sm text-muted-foreground">
+            <AlertDialogDescription className="text-base text-muted-foreground leading-relaxed">
               检测到本地保存的未完成评估，已回答 {pendingProgress?.responses.length ?? 0} 道题。请选择继续作答或重新开始。
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="sm:justify-center gap-2">
-            <AlertDialogCancel
+          <AlertDialogFooter className="sm:justify-center gap-4">
+            <Button
               onClick={handleDiscardProgress}
-              className="w-full sm:w-auto transition-transform hover:scale-[1.02]"
+              variant="outline"
+              className="w-full sm:w-auto px-6 py-3"
             >
               重新开始
-            </AlertDialogCancel>
-            <AlertDialogAction
+            </Button>
+            <Button
               onClick={handleContinueProgress}
-              className="w-full sm:w-auto bg-psychology-primary hover:bg-psychology-primary/90 transition-transform hover:scale-[1.02]"
+              className="sri-button-primary w-full sm:w-auto"
             >
               继续作答
-            </AlertDialogAction>
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
       {/* 顶部导航 */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-muted">
-        <div className="container mx-auto px-4 py-4">
+      <nav className="sri-nav-blur sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/')}
                 className="text-muted-foreground hover:text-foreground"
               >
-                <Home className="w-4 h-4 mr-2" />
+                <Home className="w-5 h-5 mr-2" />
                 首页
               </Button>
-              <div className="flex items-center gap-2">
-                <Brain className="w-5 h-5 text-psychology-primary" />
-                <span className="font-semibold text-psychology-primary">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-psychology-primary to-psychology-primary_dark rounded-xl flex items-center justify-center">
+                  <Brain className="w-6 h-6 text-white" />
+                </div>
+                <span className="font-bold text-lg text-psychology-primary">
                   {assessmentType === 'quick' ? '快速测评' : '完整测评'}
                 </span>
               </div>
@@ -399,7 +416,7 @@ const handleProgressDialogOpenChange = (open: boolean) => {
                 variant="outline"
                 size="sm"
                 onClick={handleBack}
-                className="text-muted-foreground hidden sm:flex"
+                className="text-muted-foreground hidden sm:flex border-psychology-primary/30 hover:bg-psychology-primary hover:text-white"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 返回
@@ -410,7 +427,7 @@ const handleProgressDialogOpenChange = (open: boolean) => {
                 variant="outline"
                 size="sm"
                 onClick={handleBack}
-                className="text-muted-foreground sm:hidden"
+                className="text-muted-foreground sm:hidden border-psychology-primary/30 hover:bg-psychology-primary hover:text-white"
               >
                 <ArrowLeft className="w-4 h-4" />
               </Button>
@@ -419,12 +436,17 @@ const handleProgressDialogOpenChange = (open: boolean) => {
 
           {/* 总体进度条 */}
           {currentStep !== 'consent' && (
-            <div className="mt-4">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm text-muted-foreground">整体进度</span>
-                <span className="text-sm font-medium">{Math.round(getStepProgress())}%</span>
+            <div className="mt-6">
+              <div className="flex justify-between items-center mb-3">
+                <span className="text-base font-medium text-muted-foreground">整体进度</span>
+                <span className="text-base font-bold text-psychology-primary">{Math.round(getStepProgress())}%</span>
               </div>
-              <Progress value={getStepProgress()} className="h-2" />
+              <div className="progress-bar">
+                <div
+                  className="progress-fill"
+                  style={{ width: `${getStepProgress()}%` }}
+                />
+              </div>
             </div>
           )}
         </div>
@@ -464,54 +486,63 @@ const handleProgressDialogOpenChange = (open: boolean) => {
 
         {/* 处理中状态 */}
         {currentStep === 'processing' && (
-          <div className="max-w-2xl mx-auto text-center">
-            <Card className="sri-card p-12">
-              <div className="space-y-6">
-                <div className="w-16 h-16 bg-psychology-primary/10 rounded-full flex items-center justify-center mx-auto">
-                  <Brain className="w-8 h-8 text-psychology-primary animate-pulse" />
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="sri-card-featured p-12">
+              <div className="space-y-8">
+                <div className="w-24 h-24 bg-gradient-to-br from-psychology-primary to-psychology-primary_dark rounded-3xl flex items-center justify-center mx-auto shadow-soft-lg sri-glow-effect">
+                  <Brain className="w-12 h-12 text-white animate-pulse" />
                 </div>
-                
+
                 <div>
-                  <h2 className="text-2xl font-bold text-psychology-primary mb-2">
+                  <h2 className="sri-subheading mb-4">
                     正在分析您的回答
                   </h2>
-                  <p className="text-muted-foreground">
+                  <p className="sri-text">
                     我们正在使用科学算法计算您的性压抑指数，请稍候...
                   </p>
                 </div>
 
-                <div className="space-y-3">
-                  <Progress value={100} className="h-2" />
-                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span>应用多维度标准化算法</span>
+                <div className="space-y-6">
+                  <div className="progress-bar max-w-md mx-auto">
+                    <div
+                      className="progress-fill"
+                      style={{ width: '100%' }}
+                    />
                   </div>
-                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span>生成个性化分析报告</span>
-                  </div>
-                  <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span>保护您的隐私数据</span>
+                  <div className="space-y-4 max-w-md mx-auto">
+                    <div className="flex items-center justify-center gap-3 text-base">
+                      <CheckCircle className="w-6 h-6 text-psychology-success" />
+                      <span className="font-medium">应用多维度标准化算法</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-3 text-base">
+                      <CheckCircle className="w-6 h-6 text-psychology-success" />
+                      <span className="font-medium">生成个性化分析报告</span>
+                    </div>
+                    <div className="flex items-center justify-center gap-3 text-base">
+                      <CheckCircle className="w-6 h-6 text-psychology-success" />
+                      <span className="font-medium">保护您的隐私数据</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </Card>
+            </div>
           </div>
         )}
       </main>
 
       {/* 底部提示 */}
       {currentStep === 'questionnaire' && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-muted p-3 sm:p-4">
+        <div className="sri-nav-blur fixed bottom-0 left-0 right-0 border-t p-4 sm:p-6">
           <div className="container mx-auto">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
-                <AlertTriangle className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline">您的所有回答都会安全地保存在本地设备上</span>
-                <span className="sm:hidden">数据安全保存</span>
+              <div className="flex items-center gap-3 text-sm sm:text-base">
+                <div className="w-8 h-8 bg-psychology-primary/10 rounded-lg flex items-center justify-center">
+                  <AlertTriangle className="w-4 h-4 text-psychology-primary" />
+                </div>
+                <span className="hidden sm:inline font-medium text-muted-foreground">您的所有回答都会安全地保存在本地设备上</span>
+                <span className="sm:hidden font-medium text-muted-foreground">数据安全保存</span>
               </div>
-              <div className="text-xs sm:text-sm text-muted-foreground">
+              <div className="sri-hero-badge">
                 已回答: {responses.length} 题
               </div>
             </div>

@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -82,87 +83,143 @@ body {
 
 @layer components {
 .sri-gradient {
-@apply bg-gradient-to-br from-psychology-primary/10 to-psychology-accent/10;
+@apply bg-gradient-to-br from-psychology-gradient_1/8 via-psychology-gradient_2/6 to-psychology-gradient_3/8;
+}
+
+.sri-gradient-hero {
+@apply bg-gradient-to-br from-psychology-calm via-white to-psychology-warm;
+}
+
+.sri-gradient-card {
+@apply bg-gradient-to-br from-white to-psychology-neutral/30;
 }
 
 .sri-card {
-@apply bg-card/80 backdrop-blur-sm border border-border/50 rounded-xl shadow-lg;
+@apply bg-white/90 backdrop-blur-md border border-psychology-neutral/40 rounded-2xl shadow-soft hover:shadow-soft-lg transition-all duration-300;
+}
+
+.sri-card-interactive {
+@apply sri-card hover:scale-[1.02] hover:border-psychology-primary/30 cursor-pointer;
+}
+
+.sri-card-featured {
+@apply bg-gradient-to-br from-psychology-primary/5 via-white to-psychology-accent/5 border-psychology-primary/20 shadow-soft-lg;
 }
 
 .sri-section {
+@apply py-16 px-4 sm:px-6 lg:px-8;
+}
+
+.sri-section-condensed {
 @apply py-12 px-4 sm:px-6 lg:px-8;
 }
 
 .sri-heading {
-@apply text-3xl font-bold tracking-tight text-foreground sm:text-4xl;
+@apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground bg-gradient-to-r from-psychology-primary via-psychology-secondary to-psychology-accent bg-clip-text text-transparent;
 }
 
 .sri-subheading {
-@apply text-xl font-semibold text-foreground;
+@apply text-2xl md:text-3xl font-semibold text-foreground;
 }
 
 .sri-text {
-@apply text-muted-foreground leading-relaxed;
+@apply text-muted-foreground leading-relaxed text-lg;
+}
+
+.sri-text-small {
+@apply text-muted-foreground leading-relaxed text-base;
 }
 
 .sri-button-primary {
-@apply bg-psychology-primary hover:bg-psychology-primary/90 text-white font-medium px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg;
+@apply bg-gradient-to-r from-psychology-primary to-psychology-primary_dark hover:from-psychology-primary_light hover:to-psychology-primary text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 shadow-soft hover:shadow-soft-lg hover:scale-[1.02] transform;
 }
 
 .sri-button-secondary {
-@apply bg-psychology-secondary hover:bg-psychology-secondary/90 text-white font-medium px-6 py-3 rounded-lg transition-all duration-200;
+@apply bg-gradient-to-r from-psychology-secondary to-psychology-secondary hover:from-psychology-secondary hover:to-psychology-secondary text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 shadow-soft hover:shadow-lg;
+}
+
+.sri-button-accent {
+@apply bg-gradient-to-r from-psychology-accent to-psychology-accent_light hover:from-psychology-accent_light hover:to-psychology-accent text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 shadow-soft hover:shadow-lg;
+}
+
+.sri-button-outline {
+@apply border-2 border-psychology-primary/30 text-psychology-primary hover:bg-psychology-primary hover:text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:border-psychology-primary;
 }
 
 .sri-input {
-@apply w-full px-4 py-3 border border-input rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-psychology-primary focus:border-transparent transition-all duration-200;
+@apply w-full px-5 py-4 border-2 border-psychology-neutral/50 rounded-xl bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-psychology-primary/30 focus:border-psychology-primary transition-all duration-300 placeholder:text-psychology-neutral_dark;
 }
 
 .question-card {
-@apply sri-card p-6 space-y-4 animate-fade-in;
+@apply sri-card p-8 space-y-6 animate-fade-in;
 }
 
 .scale-option {
-@apply flex items-center justify-between p-3 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer;
+@apply flex items-center justify-between p-4 border-2 border-psychology-neutral/40 rounded-xl hover:bg-psychology-primary/5 hover:border-psychology-primary/30 transition-all duration-300 cursor-pointer;
 }
 
 .scale-option.selected {
-@apply bg-psychology-primary/10 border-psychology-primary;
+@apply bg-psychology-primary/10 border-psychology-primary/50 shadow-soft;
 }
 
 .progress-bar {
-@apply h-2 bg-muted rounded-full overflow-hidden;
+@apply h-3 bg-psychology-neutral/50 rounded-full overflow-hidden;
 }
 
 .progress-fill {
-@apply h-full bg-gradient-to-r from-psychology-primary to-psychology-accent transition-all duration-500 ease-out;
+@apply h-full bg-gradient-to-r from-psychology-gradient_1 via-psychology-gradient_2 to-psychology-gradient_3 transition-all duration-700 ease-out;
 }
 
 .dimension-card {
-@apply sri-card p-4 text-center space-y-2;
+@apply sri-card p-6 text-center space-y-3 hover:scale-[1.05] transition-transform duration-300;
 }
 
 .radar-chart {
-@apply w-full h-64 sri-card p-4;
+@apply w-full h-80 sri-card p-6;
 }
 
 .result-badge {
-@apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+@apply inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold border;
 }
 
 .result-badge.low {
-@apply bg-psychology-success/10 text-psychology-success;
+@apply bg-psychology-success/10 text-psychology-success border-psychology-success/30;
 }
 
 .result-badge.moderate {
-@apply bg-yellow-100 text-yellow-800;
+@apply bg-yellow-100 text-yellow-800 border-yellow-300;
 }
 
 .result-badge.high {
-@apply bg-psychology-warning/10 text-psychology-warning;
+@apply bg-psychology-warning/10 text-psychology-warning border-psychology-warning/30;
 }
 
 .result-badge.very-high {
-@apply bg-psychology-danger/10 text-psychology-danger;
+@apply bg-psychology-danger/10 text-psychology-danger border-psychology-danger/30;
+}
+
+.sri-stat-card {
+@apply sri-card text-center p-6 hover:scale-[1.05] transition-transform duration-300;
+}
+
+.sri-feature-card {
+@apply sri-card p-8 text-center hover:scale-[1.02] hover:border-psychology-primary/30 transition-all duration-300;
+}
+
+.sri-nav-blur {
+@apply bg-white/80 backdrop-blur-md border-b border-psychology-neutral/40;
+}
+
+.sri-hero-badge {
+@apply inline-flex items-center px-4 py-2 bg-psychology-primary/10 text-psychology-primary border border-psychology-primary/30 rounded-full text-sm font-medium;
+}
+
+.sri-floating-element {
+@apply animate-float;
+}
+
+.sri-glow-effect {
+@apply animate-glow;
 }
 }
 

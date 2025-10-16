@@ -1,7 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" width="182" height="182"><svg width="182" height="182" viewBox="0 0 182 182" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="181.119" height="181.119" rx="40" fill="white"></rect>
-<path d="M55.7429 76.0664L105.052 55.7429L125.376 105.052" stroke="black" stroke-width="10.6667" stroke-linecap="round" stroke-linejoin="round"></path>
-<path d="M76.0664 125.376L105.052 55.7429" stroke="black" stroke-width="10.6667" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg><style>@media (prefers-color-scheme: light) { :root { filter: none; } }
-@media (prefers-color-scheme: dark) { :root { filter: none; } }
-</style></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- 背景圆 -->
+  <circle cx="16" cy="16" r="15" fill="#3730A3"/>
+
+  <!-- 大脑图标 -->
+  <path d="M16 8C13 8 10.5 9.5 9.5 12C9 12 8 13 8 14.5C8 16 8.5 17 9.5 17.5C9.5 19 10.5 20 12 20C13 21 14.5 22 16 22C17.5 22 19 21 20 20C21.5 20 22.5 19 22.5 17.5C23.5 17 24 16 24 14.5C24 13 23 12 22.5 12C21.5 9.5 19 8 16 8Z" fill="white"/>
+
+  <!-- 脑部纹理 -->
+  <path d="M12 12C12 11.5 12.5 11 13 11C13.5 11 14 11.5 14 12" stroke="#3730A3" stroke-width="0.5" fill="none"/>
+  <path d="M18 12C18 11.5 18.5 11 19 11C19.5 11 20 11.5 20 12" stroke="#3730A3" stroke-width="0.5" fill="none"/>
+  <path d="M14 15C14 14.5 14.5 14 15 14C15.5 14 16 14.5 16 15" stroke="#3730A3" stroke-width="0.5" fill="none"/>
+  <path d="M16 15C16 14.5 16.5 14 17 14C17.5 14 18 14.5 18 15" stroke="#3730A3" stroke-width="0.5" fill="none"/>
+
+  <!-- 中心点 -->
+  <circle cx="16" cy="16" r="1" fill="#3730A3"/>
+</svg>

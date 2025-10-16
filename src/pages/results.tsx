@@ -16,7 +16,6 @@ import {
     Brain,
     CheckCircle,
     Clock,
-    Download,
     Home,
     Info,
     RefreshCw,
@@ -24,7 +23,7 @@ import {
     TrendingUp
 } from 'lucide-react';
 import {AssessmentSession, SRI_LEVELS} from '@/types';
-import {diagnoseStorage, downloadAsJSON, getAssessmentSession} from '@/lib/storage';
+import {diagnoseStorage, getAssessmentSession} from '@/lib/storage';
 import {ALL_SCALES} from '@/lib/scales';
 import {ShareButtonMobile, ShareResult, SocialShareFloating} from '@/components/common';
 import {useIsMobile} from '@/hooks/use-mobile';
@@ -145,25 +144,6 @@ export default function Results() {
     }
   }, [sessionId, isShared, shareData]);
 
-  // 下载结果
-  const handleDownload = () => {
-    if (!session || !sessionId) return;
-    
-    const exportData = {
-      sessionId: session.id,
-      timestamp: new Date().toISOString(),
-      type: session.type,
-      demographics: session.demographics,
-      results: session.results,
-      responses: session.responses.reduce((acc, response) => {
-        acc[response.questionId] = response.value;
-        return acc;
-      }, {} as Record<string, number>)
-    };
-    
-    downloadAsJSON(exportData, `SRI评估结果_${new Date().toISOString().split('T')[0]}.json`);
-  };
-
   // 重新测评
   const handleRetake = () => {
     navigate(`/assessment?type=${session?.type || 'quick'}`);
@@ -272,30 +252,32 @@ export default function Results() {
   const levelInfo = getLevelInfo(sri.level);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-psychology-calm via-white to-psychology-warm">
+    <div className="min-h-screen sri-gradient-hero">
       {/* 顶部导航 */}
-      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-muted">
-        <div className="container mx-auto px-4 py-4">
+      <nav className="sri-nav-blur sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => navigate('/')}
                 className="text-muted-foreground hover:text-foreground"
               >
-                <Home className="w-4 h-4 mr-2" />
+                <Home className="w-5 h-5 mr-2" />
                 首页
               </Button>
-              <div className="flex items-center gap-2">
-                <Brain className="w-5 h-5 text-psychology-primary" />
-                <span className="font-semibold text-psychology-primary">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-psychology-primary to-psychology-primary_dark rounded-xl flex items-center justify-center">
+                  <Brain className="w-6 h-6 text-white" />
+                </div>
+                <span className="font-bold text-lg text-psychology-primary">
                   SRI 评估结果
                 </span>
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-3">
               {/* 分享按钮 */}
               {isMobile ? (
                 <ShareButtonMobile session={session} />
@@ -306,7 +288,7 @@ export default function Results() {
                 variant="outline"
                 size="sm"
                 onClick={handleRetake}
-                className="text-muted-foreground hidden sm:flex"
+                className="text-muted-foreground hidden sm:flex border-psychology-primary/30 hover:bg-psychology-primary hover:text-white"
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
                 重新测评
@@ -315,7 +297,7 @@ export default function Results() {
                 variant="outline"
                 size="sm"
                 onClick={handleRetake}
-                className="text-muted-foreground sm:hidden"
+                className="text-muted-foreground sm:hidden border-psychology-primary/30 hover:bg-psychology-primary hover:text-white"
               >
                 <RefreshCw className="w-4 h-4" />
               </Button>
@@ -325,36 +307,38 @@ export default function Results() {
       </nav>
 
       {/* 主要内容区域 */}
-      <main className="container mx-auto px-4 py-8 space-y-8">
+      <main className="container mx-auto px-4 py-8 space-y-10">
         {/* 主要结果卡片 */}
-        <Card className="sri-card border-2 border-psychology-primary/20">
-          <CardHeader className="text-center pb-6">
-            <div className="w-20 h-20 bg-psychology-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <BarChart3 className="w-10 h-10 text-psychology-primary" />
+        <div className="sri-card-featured max-w-4xl mx-auto border-2 border-psychology-primary/30">
+          <CardHeader className="text-center pb-8">
+            <div className="w-28 h-28 bg-gradient-to-br from-psychology-primary to-psychology-primary_light rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-soft-lg sri-glow-effect">
+              <BarChart3 className="w-14 h-14 text-white" />
             </div>
-            <CardTitle className="text-2xl sm:text-3xl font-bold text-psychology-primary mb-2">
+            <CardTitle className="sri-subheading mb-4">
               性压抑指数 (SRI)
             </CardTitle>
-            <div className="text-4xl sm:text-6xl font-bold text-psychology-primary mb-4">
+            <div className="text-5xl sm:text-7xl font-bold text-psychology-primary mb-6 bg-gradient-to-r from-psychology-primary via-psychology-secondary to-psychology-accent bg-clip-text text-transparent">
               {Math.round(sri.totalScore)}
             </div>
-            <Badge 
-              className={`text-lg flex justify-center px-6 py-2 ${getLevelColorClass(sri.level)}`}
-              variant="outline"
-            >
+            <div className={`result-badge ${sri.level} text-lg flex justify-center px-8 py-3`}>
               {levelInfo.label}
-            </Badge>
+            </div>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-8">
             {/* 分数解释 */}
             <div className="text-center">
-              <p className="text-muted-foreground mb-4">
-                您的SRI指数为 <span className="font-semibold text-psychology-primary">{Math.round(sri.totalScore)}</span>，
-                处于 <span className="font-semibold">{levelInfo.label}</span> 水平
+              <p className="sri-text mb-6">
+                您的SRI指数为 <span className="font-bold text-psychology-primary text-xl">{Math.round(sri.totalScore)}</span>，
+                处于 <span className="font-bold text-lg">{levelInfo.label}</span> 水平
               </p>
-              <div className="max-w-2xl mx-auto">
-                <Progress value={sri.totalScore} className="h-3 mb-2" />
-                <div className="flex justify-between text-xs text-muted-foreground">
+              <div className="max-w-3xl mx-auto">
+                <div className="progress-bar h-4 mb-4">
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${sri.totalScore}%` }}
+                  />
+                </div>
+                <div className="flex justify-between text-base text-muted-foreground font-medium">
                   <span>0 (较少压抑)</span>
                   <span>50 (中等)</span>
                   <span>100 (较多压抑)</span>
@@ -362,18 +346,20 @@ export default function Results() {
               </div>
             </div>
 
-            <Separator />
+            <Separator className="bg-psychology-neutral/30" />
 
             {/* 结果解释 */}
             {session.results.interpretation && session.results.interpretation.length > 0 && (
               <div>
-                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                  <Info className="w-5 h-5 text-psychology-primary" />
+                <h3 className="font-bold text-xl mb-4 flex items-center gap-3">
+                  <div className="w-10 h-10 bg-psychology-primary/10 rounded-xl flex items-center justify-center">
+                    <Info className="w-5 h-5 text-psychology-primary" />
+                  </div>
                   结果解释
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-4">
                   {session.results.interpretation.map((text, index) => (
-                    <p key={index} className="text-muted-foreground leading-relaxed">
+                    <p key={index} className="sri-text-small leading-relaxed">
                       {text}
                     </p>
                   ))}
@@ -384,22 +370,24 @@ export default function Results() {
             {/* 个性化建议 */}
             {session.results.recommendations && session.results.recommendations.length > 0 && (
               <div>
-                <h3 className="font-semibold text-lg mb-3 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-psychology-primary" />
+                <h3 className="font-bold text-xl mb-4 flex items-center gap-3">
+                  <div className="w-10 h-10 bg-psychology-success/10 rounded-xl flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-psychology-success" />
+                  </div>
                   个性化建议
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-4">
                   {session.results.recommendations.map((text, index) => (
-                    <div key={index} className="flex items-start gap-2">
-                      <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                      <p className="text-muted-foreground leading-relaxed">{text}</p>
+                    <div key={index} className="flex items-start gap-4 p-4 bg-psychology-success/5 rounded-xl">
+                      <CheckCircle className="w-6 h-6 text-psychology-success mt-0.5 flex-shrink-0" />
+                      <p className="sri-text-small leading-relaxed">{text}</p>
                     </div>
                   ))}
                 </div>
               </div>
             )}
           </CardContent>
-        </Card>
+        </div>
 
         {/* 四维度分析 */}
         <Card className="sri-card">
